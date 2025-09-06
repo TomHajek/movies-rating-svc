@@ -30,22 +30,21 @@ public class Movie {
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Rating> ratings;
 
+    @Column(nullable = false)
+    private double avgRating;
+
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
-
-    @Column(nullable = false)
-    private int ratingSum = 0;
-
-    @Column(nullable = false)
-    private int ratingCount = 0;
 
     @PrePersist
     public void prePersist() {
         createdAt = Instant.now();
     }
 
-    public double getAvgRating() {
-        return ratingCount == 0 ? 0.0 : (double) ratingSum / ratingCount;
+    public void updateAvgRating() {
+        this.avgRating = ratings.isEmpty()
+                ? 0
+                : ratings.stream().mapToInt(Rating::getValue).average().orElse(0);
     }
 
 }

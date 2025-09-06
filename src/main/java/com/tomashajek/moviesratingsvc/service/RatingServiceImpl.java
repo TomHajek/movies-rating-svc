@@ -52,6 +52,9 @@ public class RatingServiceImpl implements RatingService {
         Rating saved = ratingRepository.save(ratingEntity);
         log.info("User {} added rating for movie {} with value *{}.", user.getEmail(), movie.getName(), rating);
 
+        movie.updateAvgRating();
+        movieRepository.save(movie);
+
         return mapToResponse(saved);
     }
 
@@ -74,6 +77,9 @@ public class RatingServiceImpl implements RatingService {
                 user.getEmail(), movie.getName(), rating
         );
 
+        movie.updateAvgRating();
+        movieRepository.save(movie);
+
         return mapToResponse(saved);
     }
 
@@ -88,6 +94,9 @@ public class RatingServiceImpl implements RatingService {
 
         ratingRepository.delete(rating);
         log.info("User {} deleted rating for movie {}.", email, movie.getName());
+
+        movie.updateAvgRating();
+        movieRepository.save(movie);
     }
 
     private void validateRating(int rating) {

@@ -3,12 +3,10 @@ package com.tomashajek.moviesratingsvc.service;
 import com.tomashajek.moviesratingsvc.exception.MovieException;
 import com.tomashajek.moviesratingsvc.model.dto.MovieResponse;
 import com.tomashajek.moviesratingsvc.model.entity.Movie;
-import com.tomashajek.moviesratingsvc.model.entity.Rating;
 import com.tomashajek.moviesratingsvc.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +23,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public List<MovieResponse> getAllMovies() {
-        log.info("Fetching all movies");
+        log.info("Fetching all movies...");
         return movieRepository.findAll()
                 .stream()
                 .map(this::mapToResponse)
@@ -34,14 +32,14 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Page<MovieResponse> getMoviesPageSortedByRating(Pageable pageable) {
-        log.info("Fetching movies leaderboard");
-        return movieRepository.pageAllMoviesSorterByRating(pageable).map(this::mapToResponse);
+        log.info("Fetching movies leaderboard sorted by avgRating DESC...");
+        return movieRepository.findAll(pageable).map(this::mapToResponse);
     }
 
     @Override
     public MovieResponse getTopRatedMovie() {
-        log.info("Fetching top rated movie");
-        return movieRepository.findTopRatedMovies(1)
+        log.info("Fetching top rated movie...");
+        return movieRepository.findTop10ByOrderByAvgRatingDescCreatedAtDesc()
                 .stream()
                 .findFirst()
                 .map(this::mapToResponse)
@@ -49,15 +47,11 @@ public class MovieServiceImpl implements MovieService {
     }
 
     private MovieResponse mapToResponse(Movie movie) {
-        double avgRating = movie.getRatings().isEmpty()
-                ? 0
-                : movie.getRatings().stream().mapToInt(Rating::getValue).average().orElse(0);
-
         return new MovieResponse(
                 movie.getId(),
                 movie.getName(),
                 movie.getYear(),
-                avgRating,
+                movie.getAvgRating(),
                 movie.getCreatedAt()
         );
     }
