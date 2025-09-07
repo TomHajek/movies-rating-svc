@@ -30,12 +30,4 @@ public class Rating {
     @JoinColumn(name = "movie_id", nullable = false)
     private Movie movie;
 
-    @PrePersist
-    @PreUpdate
-    public void updateMovieAvg() {
-        if (movie != null) {
-            movie.updateAvgRating();
-        }
-    }
-
 }

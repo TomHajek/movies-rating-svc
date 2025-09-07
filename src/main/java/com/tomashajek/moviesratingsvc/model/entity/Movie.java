@@ -41,10 +41,4 @@ public class Movie {
         createdAt = Instant.now();
     }
 
-    public void updateAvgRating() {
-        this.avgRating = ratings.isEmpty()
-                ? 0
-                : ratings.stream().mapToInt(Rating::getValue).average().orElse(0);
-    }
-
 }

@@ -3,6 +3,7 @@ package com.tomashajek.moviesratingsvc.service;
 import com.tomashajek.moviesratingsvc.exception.MovieException;
 import com.tomashajek.moviesratingsvc.exception.RatingException;
 import com.tomashajek.moviesratingsvc.exception.UserException;
+import com.tomashajek.moviesratingsvc.model.dto.RatingRequest;
 import com.tomashajek.moviesratingsvc.model.dto.RatingResponse;
 import com.tomashajek.moviesratingsvc.model.entity.Movie;
 import com.tomashajek.moviesratingsvc.model.entity.Rating;
@@ -33,26 +34,27 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     @Transactional
-    public RatingResponse addRating(String email, UUID movieId, int rating) {
-        validateRating(rating);
-
+    public RatingResponse addRating(String email, RatingRequest request) {
+        validateRating(request.value());
         User user = getUserByEmail(email);
-        Movie movie = getMovieById(movieId);
+        Movie movie = getMovieById(request.movieId());
 
-        if (getRatingByUserIdAndMovieId(user.getId(), movieId).isPresent()) {
+        if (getRatingByUserIdAndMovieId(user.getId(), request.movieId()).isPresent()) {
             throw new RatingException(RATING_ALREADY_EXISTS, "Rating already exists!");
         }
 
         Rating ratingEntity = Rating.builder()
                 .user(user)
                 .movie(movie)
-                .value(rating)
+                .value(request.value())
                 .build();
 
         Rating saved = ratingRepository.save(ratingEntity);
-        log.info("User {} added rating for movie {} with value *{}.", user.getEmail(), movie.getName(), rating);
+        log.info("User {} added rating for movie {} with value *{}.", email, movie.getName(), request.value());
 
-        movie.updateAvgRating();
+        // Need to update avgRating in Movie
+        Double avg = ratingRepository.findAverageByMovieId(movie.getId());
+        movie.setAvgRating(avg != null ? avg : 0);
         movieRepository.save(movie);
 
         return mapToResponse(saved);
@@ -60,24 +62,26 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     @Transactional
-    public RatingResponse updateRating(String email, UUID movieId, int rating) {
-        validateRating(rating);
+    public RatingResponse updateRating(String email, RatingRequest request) {
+        validateRating(request.value());
 
         User user = getUserByEmail(email);
-        Movie movie = getMovieById(movieId);
+        Movie movie = getMovieById(request.movieId());
 
-        Rating existingRating = getRatingByUserIdAndMovieId(user.getId(), movieId).orElseThrow(
+        Rating existingRating = getRatingByUserIdAndMovieId(user.getId(), request.movieId()).orElseThrow(
                 () -> new RatingException(RATING_NOT_FOUND, "Rating not found!")
         );
 
-        existingRating.setValue(rating);
+        existingRating.setValue(request.value());
         Rating saved = ratingRepository.save(existingRating);
 
         log.info("User {} changed rating for movie {} to *{}.",
-                user.getEmail(), movie.getName(), rating
+                email, movie.getName(), request.value()
         );
 
-        movie.updateAvgRating();
+        // Need to update avgRating in Movie
+        Double avg = ratingRepository.findAverageByMovieId(movie.getId());
+        movie.setAvgRating(avg != null ? avg : 0);
         movieRepository.save(movie);
 
         return mapToResponse(saved);
@@ -95,7 +99,9 @@ public class RatingServiceImpl implements RatingService {
         ratingRepository.delete(rating);
         log.info("User {} deleted rating for movie {}.", email, movie.getName());
 
-        movie.updateAvgRating();
+        // Need to update avgRating in Movie
+        Double avg = ratingRepository.findAverageByMovieId(movie.getId());
+        movie.setAvgRating(avg != null ? avg : 0);
         movieRepository.save(movie);
     }
 
