@@ -39,8 +39,8 @@ spring:
 
 logging:
   level:
-    org.hibernate.SQL: ERROR
-    org.hibernate.type.descriptor.sql.BasicBinder: ERROR
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 #  flyway:
 #    enabled: true

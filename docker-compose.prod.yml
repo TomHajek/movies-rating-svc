@@ -1,0 +1,46 @@
+version: "3.9"
+services:
+  db:
+    container_name: postgresql-db
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: movies-db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_password_here
+    ports: ["5432:5432"]
+    volumes:
+      - movies_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d movies-db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    container_name: movies-rating-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: movies-db
+      DB_USER: postgres
+      DB_PASSWORD: postgres_password_here
+      SERVER_PORT: 8080
+    ports: ["8080:8080"]
+    networks:
+      - movies-network
+
+volumes:
+  movies_db_data:
+
+networks:
+  movies-network:
+    driver: bridge
