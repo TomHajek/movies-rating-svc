@@ -14,7 +14,7 @@ import java.util.Map;
 
 /**
  * Using JWTUtils to simplify the demo. Normally, we would have an external IdP like Okta or AWS Cognito.
- * Also, the secret and other config params would be securely set in GitLab/GitHub environment variables and
+ * Also, secrets and other configs params would be securely set in GitLab/GitHub environment variables and
  * not hardcoded here or elsewhere.
  */
 public class JwtUtil {
