@@ -64,6 +64,12 @@
             <version>${springdoc-version}</version>
         </dependency>
 
+        <!-- Monitoring -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+
         <!-- Others -->
         <dependency>
             <groupId>org.projectlombok</groupId>

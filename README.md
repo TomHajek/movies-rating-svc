@@ -154,4 +154,28 @@ Spring Boot Actuator provides production-ready endpoints for monitoring and mana
 
 Available endpoints:
 - Health Check → `GET /actuator/health`,
-- Application Info → `GET /actuator/info`.
+- Application Info → `GET /actuator/info`,
+- Prometheus → `GET /actuator/prometheus`.
+
+### Prometheus
+
+- **Access Prometheus**
+  - Source endpoints that Prometheus scraping from → http://localhost:9090/targets.
+  - Querying metrics → http://localhost:9090/query.
+
+### Grafana
+
+- **Access Grafana** 
+  - URL: http://localhost:3000,
+  - Username: `admin`,
+  - Password: `admin`.
+
+- **Add Prometheus as a datasource**
+  - Go to Connections → Data Sources → Add data source.
+  - Choose Prometheus.
+  - Set the URL to point to our Prometheus container: `http://prometheus:9090`.
+
+- **Creating a dashboard**
+  - Go to Dashboard → Create dashboard.
+  - There you can either import or create a dashboard.
+  - There you can query Prometheus metrics.
