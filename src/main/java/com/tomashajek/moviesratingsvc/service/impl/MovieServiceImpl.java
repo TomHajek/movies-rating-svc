@@ -1,9 +1,10 @@
-package com.tomashajek.moviesratingsvc.service;
+package com.tomashajek.moviesratingsvc.service.impl;
 
 import com.tomashajek.moviesratingsvc.exception.MovieException;
 import com.tomashajek.moviesratingsvc.model.dto.MovieResponse;
 import com.tomashajek.moviesratingsvc.model.entity.Movie;
 import com.tomashajek.moviesratingsvc.repository.MovieRepository;
+import com.tomashajek.moviesratingsvc.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

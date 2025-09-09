@@ -2,6 +2,7 @@ package com.tomashajek.moviesratingsvc.configuration;
 
 import com.tomashajek.moviesratingsvc.security.CustomUserDetailsService;
 import com.tomashajek.moviesratingsvc.security.JwtAuthenticationFilter;
+import com.tomashajek.moviesratingsvc.security.JwtTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
+    private final JwtTokenService jwtTokenService;
     private final CustomUserDetailsService customUserDetailsService;
 
     @Bean
@@ -56,7 +58,7 @@ public class SecurityConfiguration {
                         .anyRequest()
                         .authenticated()
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(customUserDetailsService),
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenService, customUserDetailsService),
                         UsernamePasswordAuthenticationFilter.class
                 );
 

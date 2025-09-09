@@ -4,6 +4,7 @@ import com.tomashajek.moviesratingsvc.exception.MovieException;
 import com.tomashajek.moviesratingsvc.model.dto.MovieResponse;
 import com.tomashajek.moviesratingsvc.model.entity.Movie;
 import com.tomashajek.moviesratingsvc.repository.MovieRepository;
+import com.tomashajek.moviesratingsvc.service.impl.MovieServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

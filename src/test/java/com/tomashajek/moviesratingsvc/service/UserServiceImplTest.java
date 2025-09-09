@@ -7,8 +7,9 @@ import com.tomashajek.moviesratingsvc.model.dto.UserRegisterRequest;
 import com.tomashajek.moviesratingsvc.model.dto.UserRegisterResponse;
 import com.tomashajek.moviesratingsvc.model.entity.User;
 import com.tomashajek.moviesratingsvc.repository.UserRepository;
-import com.tomashajek.moviesratingsvc.security.CustomUserDetails;
-import com.tomashajek.moviesratingsvc.util.JwtUtil;
+import com.tomashajek.moviesratingsvc.security.UserPrincipal;
+import com.tomashajek.moviesratingsvc.security.JwtTokenService;
+import com.tomashajek.moviesratingsvc.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,9 @@ class UserServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private JwtTokenService jwtTokenService;
 
     @Mock
     private BCryptPasswordEncoder passwordEncoder;
@@ -89,7 +93,7 @@ class UserServiceImplTest {
         @Test
         void login_shouldSuccessAndReturnToken() {
             UserLoginRequest request = new UserLoginRequest("john.cena@example.com", "peacemaker");
-            CustomUserDetails userDetails = new CustomUserDetails(
+            UserPrincipal userPrincipal = new UserPrincipal(
                     UUID.randomUUID(),
                     "john.cena@example.com",
                     "peacemaker",
@@ -97,11 +101,11 @@ class UserServiceImplTest {
             );
 
             Authentication authentication = Mockito.mock(Authentication.class);
-            Mockito.when(authentication.getPrincipal()).thenReturn(userDetails);
+            Mockito.when(authentication.getPrincipal()).thenReturn(userPrincipal);
             Mockito.when(authenticationManager.authenticate(Mockito.any())).thenReturn(authentication);
 
-            try (MockedStatic<JwtUtil> jwtUtilMock = Mockito.mockStatic(JwtUtil.class)) {
-                jwtUtilMock.when(() -> JwtUtil.generateToken(userDetails)).thenReturn("jwt-token");
+            try (MockedStatic<JwtTokenService> jwtUtilMock = Mockito.mockStatic(JwtTokenService.class)) {
+                jwtUtilMock.when(() -> jwtTokenService.generateToken(userPrincipal)).thenReturn("jwt-token");
 
                 UserLoginResponse response = userService.login(request);
                 assertEquals("jwt-token", response.token());

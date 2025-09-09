@@ -1,4 +1,4 @@
-package com.tomashajek.moviesratingsvc.service;
+package com.tomashajek.moviesratingsvc.service.impl;
 
 import com.tomashajek.moviesratingsvc.exception.UserException;
 import com.tomashajek.moviesratingsvc.model.dto.UserLoginRequest;
@@ -7,8 +7,9 @@ import com.tomashajek.moviesratingsvc.model.dto.UserRegisterRequest;
 import com.tomashajek.moviesratingsvc.model.dto.UserRegisterResponse;
 import com.tomashajek.moviesratingsvc.model.entity.User;
 import com.tomashajek.moviesratingsvc.repository.UserRepository;
-import com.tomashajek.moviesratingsvc.security.CustomUserDetails;
-import com.tomashajek.moviesratingsvc.util.JwtUtil;
+import com.tomashajek.moviesratingsvc.security.UserPrincipal;
+import com.tomashajek.moviesratingsvc.security.JwtTokenService;
+import com.tomashajek.moviesratingsvc.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,8 +28,10 @@ import static com.tomashajek.moviesratingsvc.exception.UserException.ErrorType.*
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final JwtTokenService jwtTokenService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+
 
     @Override
     @Transactional
@@ -59,8 +62,8 @@ public class UserServiceImpl implements UserService {
                     new UsernamePasswordAuthenticationToken(request.email(), request.password());
 
             Authentication authentication = authenticationManager.authenticate(authenticateRequest);
-            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-            String token = JwtUtil.generateToken(customUserDetails);
+            UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+            String token = jwtTokenService.generateToken(userPrincipal);
 
             log.info("User {} logged in successfully.", request.email());
             return new UserLoginResponse(token);

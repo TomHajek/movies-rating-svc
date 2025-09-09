@@ -1,24 +1,26 @@
+# THIS IS ONLY EXAMPLE, THAT PRODUCTION ENV (PROFILE) WOULD BE SEPARATED FROM DEV IN REAL-WORLD SCENARIO.
+# CONFIG PARAMS WOULD BE PICKED FROM THE PIPELINE.
 spring:
   config:
     activate:
       on-profile: prod
 
   datasource:
-    url: jdbc:postgresql://${DB_HOST:db}:${DB_PORT:5432}/${DB_NAME:movies-db}
-    username: ${DB_USER:postgres}
-    password: ${DB_PASSWORD:postgres}
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: validate   # safer for prod (no accidental schema changes)
+      ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
 
 server:
-  port: ${PORT:8080}
+  port: ${PORT}
 
 management:
   endpoints:
@@ -28,3 +30,8 @@ management:
   endpoint:
     health:
       show-details: never
+
+logging:
+  level:
+    root: INFO
+    org.springframework: WARN

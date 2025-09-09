@@ -10,24 +10,20 @@ import java.util.UUID;
 
 @Getter
 @RequiredArgsConstructor
-public class CustomUserDetails implements UserDetails { //todo rename to UserPrincipal?
+public class UserPrincipal implements UserDetails {
 
     private UUID id;
     private String email;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public CustomUserDetails(
+    public UserPrincipal(
             UUID id, String email, String password, Collection<? extends GrantedAuthority> authorities
     ) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.authorities = authorities;
-    }
-
-    public UUID getId() {
-        return id;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.tomashajek.moviesratingsvc.service;
+package com.tomashajek.moviesratingsvc.service.impl;
 
 import com.tomashajek.moviesratingsvc.exception.MovieException;
 import com.tomashajek.moviesratingsvc.exception.RatingException;
@@ -11,6 +11,7 @@ import com.tomashajek.moviesratingsvc.model.entity.User;
 import com.tomashajek.moviesratingsvc.repository.MovieRepository;
 import com.tomashajek.moviesratingsvc.repository.RatingRepository;
 import com.tomashajek.moviesratingsvc.repository.UserRepository;
+import com.tomashajek.moviesratingsvc.service.RatingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

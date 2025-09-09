@@ -9,6 +9,7 @@ import com.tomashajek.moviesratingsvc.model.entity.User;
 import com.tomashajek.moviesratingsvc.repository.MovieRepository;
 import com.tomashajek.moviesratingsvc.repository.RatingRepository;
 import com.tomashajek.moviesratingsvc.repository.UserRepository;
+import com.tomashajek.moviesratingsvc.service.impl.RatingServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

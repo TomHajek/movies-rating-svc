@@ -1,6 +1,5 @@
 package com.tomashajek.moviesratingsvc.security;
 
-import com.tomashajek.moviesratingsvc.util.JwtUtil;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -19,6 +18,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    private final JwtTokenService jwtTokenService;
     private final CustomUserDetailsService customUserDetailsService;
 
     @Override
@@ -31,12 +31,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 String token = authorizationHeader.substring(7);
-                CustomUserDetails customUserDetails =
-                        (CustomUserDetails) customUserDetailsService.loadUserByUsername(JwtUtil.extractEmail(token));
+                UserPrincipal userPrincipal =
+                        (UserPrincipal) customUserDetailsService.loadUserByUsername(jwtTokenService.extractEmail(token));
 
-                if (JwtUtil.validateToken(token, customUserDetails)) {
+                if (jwtTokenService.validateToken(token, userPrincipal)) {
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                            customUserDetails, null, customUserDetails.getAuthorities()
+                            userPrincipal, null, userPrincipal.getAuthorities()
                     );
                     authentication.setDetails(new WebAuthenticationDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authentication);

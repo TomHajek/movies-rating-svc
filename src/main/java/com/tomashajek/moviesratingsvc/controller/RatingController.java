@@ -2,7 +2,7 @@ package com.tomashajek.moviesratingsvc.controller;
 
 import com.tomashajek.moviesratingsvc.model.dto.RatingRequest;
 import com.tomashajek.moviesratingsvc.model.dto.RatingResponse;
-import com.tomashajek.moviesratingsvc.security.CustomUserDetails;
+import com.tomashajek.moviesratingsvc.security.UserPrincipal;
 import com.tomashajek.moviesratingsvc.service.RatingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -38,7 +38,7 @@ public class RatingController {
     public ResponseEntity<RatingResponse> addRating(
             @Parameter(description = "Authenticated user details.")
             @AuthenticationPrincipal
-            CustomUserDetails userDetails,
+            UserPrincipal userPrincipal,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Rating request data.",
                     required = true,
@@ -47,7 +47,7 @@ public class RatingController {
             @RequestBody
             RatingRequest request
     ) {
-        RatingResponse response = ratingService.addRating(userDetails.getUsername(), request);
+        RatingResponse response = ratingService.addRating(userPrincipal.getUsername(), request);
         return ResponseEntity.status(201).body(response);
     }
 
@@ -64,7 +64,7 @@ public class RatingController {
     public ResponseEntity<RatingResponse> updateRating(
             @Parameter(description = "Authenticated user details.")
             @AuthenticationPrincipal
-            CustomUserDetails userDetails,
+            UserPrincipal userPrincipal,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Updated rating data.",
                     required = true,
@@ -73,7 +73,7 @@ public class RatingController {
             @RequestBody
             RatingRequest request
     ) {
-        RatingResponse response = ratingService.updateRating(userDetails.getUsername(), request);
+        RatingResponse response = ratingService.updateRating(userPrincipal.getUsername(), request);
         return ResponseEntity.ok(response);
     }
 
@@ -89,12 +89,12 @@ public class RatingController {
     public ResponseEntity<Void> deleteRating(
             @Parameter(description = "Authenticated user details.")
             @AuthenticationPrincipal
-            CustomUserDetails userDetails,
+            UserPrincipal userPrincipal,
             @Parameter(description = "ID of the movie to delete the rating for.")
             @PathVariable
             UUID movieId
     ) {
-        ratingService.deleteRating(userDetails.getUsername(), movieId);
+        ratingService.deleteRating(userPrincipal.getUsername(), movieId);
         return ResponseEntity.noContent().build();
     }
 
